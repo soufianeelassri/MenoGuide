@@ -101,10 +101,4 @@ android/, ios/, web/, windows/, macos/, linux/  # Plateformes supportées
 - Shimmer, Lottie, Google Fonts, etc.
 
 ---
-
-## �� Démos & captures d'écran
-
-Ajoutez ici vos captures d'écran ou GIFs de l'application.
-
-
 **Menoguide+** – Prendre soin de soi, ensemble, à chaque étape de la vie 🌱
