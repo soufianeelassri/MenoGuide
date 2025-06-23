@@ -43,7 +43,7 @@ Please check the following READMEs:
 
 ## Watch the demo
 
-[![MenoGuide+ Demo](https://youtu.be/pNd0M0HT-bM/0.jpg)](https://youtu.be/pNd0M0HT-bM "MenoGuide+ Demo")
+[![MenoGuide+ Demo](http://img.youtube.com/vi/pNd0M0HT-bM/0.jpg)](https://youtu.be/pNd0M0HT-bM "MenoGuide+ Demo")
 
 ## License
 
