@@ -1,0 +1,23 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "functions": {
+    "source": "functions"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "menovibe-a1b9a",
+          "appId": "1:628289211775:android:261df8eedbe1ce21e01e4a",
+          "fileOutput": "android/app/google-services.json"
+        }
+      }
+    }
+  }
+}
