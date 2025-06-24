@@ -18,7 +18,7 @@ We are a team of 3 members:
 | AI Engineer | Team Lead | Mobile Engineer |
 |:-------------------------:|:-------------------------:|:-------------------------:|
 |<img src="https://avatars.githubusercontent.com/u/130293879?v=4" width="100px" height="100px"> |<img src="https://avatars2.githubusercontent.com/u/27445092?s=460&u=349cffccfccda38293e4aab20868a77b60079274&v=4" width="100px" height="100px"> | <img src="https://avatars.githubusercontent.com/u/68086990?v=4" width="100px" height="100px">|
-|[Soufiane Elassri](https://github.com/soufianeelassri)| [Sara EL-ATEIF](https://github.com/elateifsara)| [Zakaria Oulamine](https://github.com/olamineZakaria) |
+|[Soufiane Elassri](https://github.com/soufianeelassri)| [Sara EL-ATEIF](https://github.com/elateifsara)| [Zakaria Olamine](https://github.com/olamineZakaria) |
 
 ## About our project "MenoGuide+"
 
