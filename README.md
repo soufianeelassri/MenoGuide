@@ -39,11 +39,11 @@ MenoGuide+ offers a personalized program for women in menopause, leveraging AI a
 Please check the following READMEs:
 
 - For [Agents Services](https://github.com/soufianeelassri/MenoGuide/blob/main/agents-service/README.md)
-- For [Flutter App]()
+- For [Flutter App](https://github.com/soufianeelassri/MenoGuide/tree/main/flutter-app)
 
 ## Watch the demo
 
-[![MenoGuide+ Demo](https://youtu.be/pNd0M0HT-bM/0.jpg)](https://youtu.be/pNd0M0HT-bM "MenoGuide+ Demo")
+[![MenoGuide+ Demo](http://img.youtube.com/vi/pNd0M0HT-bM/0.jpg)](https://youtu.be/pNd0M0HT-bM "MenoGuide+ Demo")
 
 ## License
 
