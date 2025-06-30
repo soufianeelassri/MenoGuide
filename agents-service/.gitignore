@@ -13,6 +13,10 @@ __pycache__/
 .venv/
 venv/
 
+# Ignore real environment and requirements files
+prod.env.yaml
+agents/requirements.txt
+
 # IDEs
 .vscode/
 .idea/

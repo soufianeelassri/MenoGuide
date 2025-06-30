@@ -1,85 +1,14 @@
-import os
-import uuid
-from dotenv import load_dotenv
 from google.adk.agents import Agent
-from google.adk.tools.function_tool import FunctionTool
+from google.adk.tools import agent_tool
 
-load_dotenv()
+from agents.nutrition_expert.agent import root_agent as nutrition_agent
+from agents.life_coach.agent import root_agent as life_coach_agent
+from agents.community_connector.agent import root_agent as community_connector_agent
 
-REMOTE_AGENT_ADDRESSES_STR = os.getenv("REMOTE_AGENT_ADDRESSES", "")
-REMOTE_AGENT_ADDRESSES = [
-    addr.rstrip("/")
-    for addr in REMOTE_AGENT_ADDRESSES_STR.split(",")
-    if addr.strip()
-]
+nutrition_tool = agent_tool.AgentTool(agent=nutrition_agent)
+life_coach_tool = agent_tool.AgentTool(agent=life_coach_agent)
+community_connector_tool = agent_tool.AgentTool(agent=community_connector_agent)
 
-if not REMOTE_AGENT_ADDRESSES:
-    raise ValueError(
-        "Maestro agent cannot be built: REMOTE_AGENT_ADDRESSES environment variable is empty."
-    )
-
-print(f"Maestro Root: Found {len(REMOTE_AGENT_ADDRESSES)} remote agent addresses to configure as tools.")
-
-
-def make_a2a_fn(base_url: str):
-    import requests, json
-    from urllib.parse import quote_plus
-    import uuid
-
-    def call_remote(input: dict) -> str:
-        text = input.get("text", "")
-        if not text:
-            return "Error: No input text provided to remote agent."
-
-        user_id = str(uuid.uuid4())
-        try:
-            resp = requests.post(
-                f"{base_url}/v1/tasks",
-                json={"user_id": user_id},
-                timeout=10,
-            )
-            resp.raise_for_status()
-            task_id = resp.json().get("task_id")
-
-            updates_url = (
-                f"{base_url}/v1/tasks/{quote_plus(task_id)}/updates"
-                f"?message={quote_plus(text)}"
-            )
-            response = requests.get(updates_url, stream=True, timeout=60)
-            response.raise_for_status()
-
-            full_response = []
-            for raw_line in response.iter_lines(decode_unicode=True):
-                if not raw_line:
-                    continue
-                if raw_line.startswith("data: "):
-                    data = json.loads(raw_line[len("data: "):])
-                    if data.get("type") == "end_of_stream":
-                        break
-                    content = data.get("content") or data.get("response") or data.get("text")
-                    if content:
-                        full_response.append(content)
-
-            result = "".join(full_response)
-            print(f"[{base_url}] call_remote returning: {result!r}")
-            return result
-
-        except Exception as e:
-            err = f"Error contacting remote agent at {base_url}: {str(e)}"
-            print(err)
-            return err
-
-    call_remote.__name__ = base_url.split("/")[-1] + "_tool"
-    return call_remote
-
-
-specialist_tools = []
-for base_url in REMOTE_AGENT_ADDRESSES:
-    fn = make_a2a_fn(base_url)
-    specialist_tools.append(FunctionTool(fn))
-
-
-# Your new mega prompt inline here:
 instruction = """
 You are the "Maestro" agent, the empathetic and intelligent front door to a Multimodal Menopause Wellness system.
 
@@ -119,7 +48,11 @@ root_agent = Agent(
     name="maestro_agent",
     instruction=instruction,
     description="The central orchestrator for the Menopause Wellness Assistant.",
-    tools=specialist_tools,
+    tools=[
+        nutrition_tool,
+        life_coach_tool,
+        community_connector_tool,
+    ],
 )
 
-print(f"Maestro root agent '{root_agent.name}' has been created with {len(root_agent.tools)} specialist tools and is ready for deployment.")
+print(f"Maestro root agent '{root_agent.name}' has been created with specialist agent tools.")

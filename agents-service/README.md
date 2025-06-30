@@ -1,119 +1,99 @@
-# MenoGuide+ Agents Service
+# Agents Service for MenoGuide+
 
 ## Overview
 
-MenoGuide+ is a modular, AI-powered wellness assistant designed to support users through menopause by providing empathetic guidance, evidence-based nutrition advice, emotional coaching, and community connections. The system is built around a multi-agent architecture, with each agent specializing in a key area of support, and leverages Retrieval-Augmented Generation (RAG) tools for up-to-date, context-aware responses.
+The **Agents Service** is a core backend component of the MenoGuide+ platform, providing intelligent, agent-based support for menopause wellness. It orchestrates multiple specialized AI agents to deliver evidence-based guidance, emotional support, and community connections for users navigating menopause.
+
+This service is built using [Google ADK](https://github.com/google/adk) and FastAPI, and is designed for easy deployment via Docker.
+
+---
 
 ## Architecture
 
-- **Maestro Agent**: The central orchestrator and entry point for users. It listens, gathers context, and routes users to the most relevant specialist agent (Nutrition Expert, Life Coach, Community Connector).
-- **Specialist Agents**: Each agent is a microservice, containerized and independently deployable:
-  - **Nutrition Expert**: Provides evidence-based dietary guidance for menopause symptoms, leveraging a RAG knowledge base.
-  - **Life Coach**: Offers emotional support and coaching, helping users navigate psychological challenges.
-  - **Community Connector**: Connects users to online communities, local support groups, curated content, and directories of professionals.
-- **RAG & Search Tools**: Utilities for knowledge retrieval, document search, and integration with Google Cloud Vertex AI Search.
-- **Common Utilities**: Shared code for session management, task handling, and type definitions.
+- **Main API**: FastAPI app exposing endpoints for agent interactions.
+- **Agents**: Modular AI agents, each with a specific focus:
+  - **Maestro**: Central orchestrator, routes user queries to the appropriate specialist agent.
+  - **Nutrition Expert**: Provides evidence-based dietary and nutrition guidance for menopause symptoms.
+  - **Life Coach**: Offers emotional support and life coaching strategies.
+  - **Community Connector**: Connects users to online communities, local support groups, and curated resources.
+- **Google ADK**: Used for agent orchestration, session management, and integration with Google Cloud AI services.
 
-## Agents
-
-### Maestro Agent
-- **Role**: Welcomes users, gathers context, and routes them to the appropriate specialist agent.
-- **Key Features**:
-  - Empathetic, context-aware conversation
-  - Intelligent routing based on user needs (diet, emotional, community)
-  - Coordination and follow-up
-  - Safety checks for distress
-
-### Nutrition Expert
-- **Role**: Provides personalized, actionable dietary advice for menopause symptoms.
-- **Features**:
-  - Uses a RAG knowledge base for evidence-based suggestions
-  - Analyzes user diet and symptoms
-  - Offers practical tips, recipes, and educational content
-  - Strong disclaimers: Not a substitute for medical advice
-
-### Life Coach
-- **Role**: Supports users emotionally, helping them build resilience and find coping strategies.
-- **Features**:
-  - Empathetic, non-judgmental coaching
-  - Open-ended questions and validation
-  - Suggests evidence-based coping techniques
-  - Not a substitute for therapy or clinical care
-
-### Community Connector
-- **Role**: Connects users to communities, support groups, curated stories, and professional directories.
-- **Features**:
-  - Curates online and local resources
-  - Shares personal stories and content
-  - Provides disclaimers for professional listings
-  - Respects user privacy
-
-## RAG & Search Tools
-
-- **Location**: `tools/rag_and_search_tools/`
-- **Purpose**: Provides document retrieval and search capabilities, integrating with Google Cloud Vertex AI Search and GCS.
-- **Key Files**:
-  - `knowledge_base.py`: Retrieval logic for knowledge base queries
-  - `mcp_server.py`: API server for tool access (FastAPI/Starlette)
-  - `requirements.txt`: Dependencies for RAG tools
-  - `Dockerfile`: Containerization for deployment
+---
 
 ## Setup & Installation
 
 ### Prerequisites
 - Python 3.12+
-- Google Cloud account with Vertex AI and Discovery Engine enabled
-- Docker (for containerized deployment)
-- `gcloud` CLI
+- [Google ADK](https://github.com/google/adk) dependencies (see requirements.txt)
+- Access to Google Cloud project and Vertex AI (for production)
 
-### Environment Setup
-1. **Initialize Google Cloud Project**
-   ```sh
-   ./init.sh
+### Local Development
+1. **Clone the repository**
+2. **Install dependencies:**
+   - Copy the example requirements file to a real one:
+     ```bash
+     cp agents/requirements.example.txt agents/requirements.txt
+     pip install -r agents/requirements.txt
+     ```
+3. **Set environment variables:**
+   - Copy the example environment file and adjust values as needed for your setup:
+     ```bash
+     cp prod.env.example.yaml prod.env.yaml
+     # Edit prod.env.yaml with your actual credentials and configuration
+     ```
+4. **Run the service:**
+   ```bash
+   python main.py
    ```
-   This script stores your Google Cloud Project ID locally.
 
-2. **Set Environment Variables**
-   ```sh
-   source ./set_env.sh
-   ```
-   This script authenticates with Google Cloud and exports required environment variables.
+---
 
-### Install Dependencies
-Each agent and tool has its own `requirements.txt`. For example, to install dependencies for the Nutrition Expert:
-```sh
-pip install -r agents/nutrition_expert/requirements.txt
-```
-Repeat for each agent and tool as needed.
+## Environment Variables
 
-## Deployment
+The service uses the following environment variables (see `prod.env.example.yaml` for a template):
 
-### Docker
-Each agent and the RAG tools can be built and run as Docker containers. Example for the Nutrition Expert:
-```sh
-docker build -t nutrition-expert ./agents/nutrition_expert
+- `GOOGLE_CLOUD_PROJECT`: Google Cloud project ID
+- `GOOGLE_CLOUD_LOCATION`: Google Cloud region (e.g., us-central1)
+- `GOOGLE_GENAI_USE_VERTEXAI`: Set to "true" to use Vertex AI
+- `DATA_STORE_ID`: Path to the RAG knowledge base in Google Cloud
+- `MAESTRO_AGENT_RESOURCE_NAME`: Resource name for the Maestro agent
 
-docker run -p 8080:8080 --env-file .env nutrition-expert
-```
-Repeat for each agent and the RAG tools.
+---
 
-### Vertex AI Agent Engine
-The Maestro agent can be deployed to Google Vertex AI Agent Engine using the provided deployment script:
-```sh
-python agents/app/agent_engine_app.py --project-id <YOUR_PROJECT_ID> --location <REGION> --agent-name maestro-wellness-agent --remote-agents <SPECIALIST_AGENT_URLS>
+## Docker Usage
+
+To build and run the service in Docker:
+
+```bash
+docker build -t menoguide-agents-service .
+docker run -p 8080:8080 --env-file prod.env.yaml menoguide-agents-service
 ```
 
-## Directory Structure
+---
 
-- `agents/` - All agent microservices and shared code
-  - `maestro/` - Maestro agent (orchestrator)
-  - `nutrition_expert/` - Nutrition Expert agent
-  - `life_coach/` - Life Coach agent
-  - `community_connector/` - Community Connector agent
-  - `common/` - Shared utilities and types
-  - `app/` - Deployment and orchestration scripts
-- `tools/` - RAG and search tools
-- `init.sh`, `set_env.sh` - Setup scripts
+## Agents Overview
 
-## Contact
-For questions or contributions, please contact the project maintainer.
+### Maestro (Orchestrator)
+- Welcomes users, gathers context, and routes queries to the appropriate specialist agent.
+- Ensures a smooth, empathetic user experience.
+
+### Nutrition Expert
+- Provides personalized, evidence-based dietary advice for menopause symptoms.
+- Uses a RAG knowledge base for up-to-date nutrition research.
+- Emphasizes that advice is complementary and not a substitute for medical care.
+
+### Life Coach
+- Offers emotional support and life coaching strategies.
+- Helps users manage stress, mood swings, and emotional challenges.
+- Clearly states it is not a substitute for professional mental health support.
+
+### Community Connector
+- Connects users to online communities, local support groups, and curated content.
+- Helps users find relevant healthcare professionals and shared experiences.
+- Does not endorse specific providers; users must verify suitability themselves.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
