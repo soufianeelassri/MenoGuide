@@ -1,5 +1,0 @@
-google-cloud-aiplatform[reasoningengine,adk]
-google-adk
-python-dotenv
-google-cloud-storage
-google-cloud-discoveryengine
